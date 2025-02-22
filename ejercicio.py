@@ -52,7 +52,7 @@ campo_texto.config(justify="left", state="normal")
 
 #label para el campo (descripción - textArea)
 label= Label(ventana, text="Descripción")
-label.grid(row=3, column=0, sticky=N,padx=5,pady=5)
+label.grid(row=3, column=0, sticky=W,padx=5,pady=5)
 
 #campo de texto GRANDE(descripción)
 campo_texto = Entry(ventana,textvariable=descripcion)
@@ -68,18 +68,25 @@ campo_texto.config(justify="left", state="normal")
 Label(ventana).grid(row=4, column=1)
 
 def agregar():
-    db_nombre = nombre.get()
-    db_apellido = apellido.get()
-    db_descripcion = descripcion.get()
+    if nombre.get() != "" or apellido.get() != "" or descripcion.get() != "":
+        
+        db_nombre = nombre.get()
+        db_apellido = apellido.get()
+        db_descripcion = descripcion.get()
    
-    #print(db_id)
-    mostrar = f'Nombre: {db_nombre} Apellido {db_apellido} Dirección: {db_descripcion}' 
+        #print(db_id)
+        #mostrar = f'Nombre: {db_nombre} Apellido {db_apellido} Dirección: {db_descripcion}' 
 
-    conn.execute('''INSERT INTO usuarios (nombre,apellido,descripcion) VALUES('%s' , '%s' , '%s' )'''%(db_nombre,db_apellido,db_descripcion))
+        conn.execute('''INSERT INTO usuarios (nombre,apellido,descripcion) VALUES('%s' , '%s' , '%s' )'''%(db_nombre,db_apellido,db_descripcion))
 
-    conn.commit()
+        conn.commit()
 
-
+    area.delete(1.0, END)
+    cursor.execute('SELECT * FROM usuarios')
+    participantes = cursor.fetchall()
+    for participante in participantes:
+        area.insert(END, f'ID: {participante[0]} | Nombre: {participante[1]} | Email: {participante[2]} | Descripción: {participante[3]}\n')
+   
     #print("Registro insertado con exito")
     #limpiar campos
     nombre.set("")
@@ -96,6 +103,16 @@ boton.config(
     command=agregar)
 
 
+# Área de impresión
+Fr1 = Frame(ventana, bd=10, relief=GROOVE, bg="#3891c8")
+Fr1.place(x=50, y=230, width=600, height=160)
 
+LB = Label(Fr1, text="Datos", font=("arial black", 17), bd=7, relief=GROOVE, bg="#3891c8", fg="#ffffff").pack(fill=X)
+
+scroll = Scrollbar(Fr1, orient=VERTICAL)
+area = Text(Fr1, yscrollcommand=scroll.set)
+scroll.pack(side=RIGHT, fill=Y)
+scroll.config(command=area.yview)
+area.pack(fill=BOTH, expand=1)
 
 ventana.mainloop()
