@@ -86,7 +86,7 @@ def agregar():
     apellido.set("")
     descripcion.set("")
 
-boton = Button(ventana, text="enviar")
+boton = Button(ventana, text="submit")
 boton.grid(row=5, column=1, sticky=W)
 boton.config(
     padx=10,
